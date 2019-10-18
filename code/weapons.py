@@ -143,13 +143,13 @@ class Weapons(object):
                 'pumpshotgun': 'Item_Weapon_Winchester_C',
                 'S1897': 'Item_Weapon_Winchester_C',
                 '1897': 'Item_Weapon_Winchester_C',
-                'skorp': 'Item_Weapon_vz61Skorpian_C',
-                'scorp': 'Item_Weapon_vz61Skorpian_C',
-                'skorpian': 'Item_Weapon_vz61Skorpian_C',
-                'scorpian': 'Item_Weapon_vz61Skorpian_C',
-                'vz61skorpian': 'Item_Weapon_vz61Skorpian_C',
-                'vz61': 'Item_Weapon_vz61Skorpian_C',
-                'vz': 'Item_Weapon_vz61Skorpian_C'
+                'skorp': 'Item_Weapon_vz61Skorpion_C',
+                'scorp': 'Item_Weapon_vz61Skorpion_C',
+                'skorpion': 'Item_Weapon_vz61Skorpion_C',
+                'scorpion': 'Item_Weapon_vz61Skorpion_C',
+                'vz61skorpion': 'Item_Weapon_vz61Skorpion_C',
+                'vz61': 'Item_Weapon_vz61Skorpion_C',
+                'vz': 'Item_Weapon_vz61Skorpion_C'
         }
 
     def key_to_name(self, key):
@@ -192,7 +192,7 @@ class Weapons(object):
                 'Item_Weapon_Vector_C': 'Vector',
                 'Item_Weapon_Win1894_C': 'Win1894',
                 'Item_Weapon_Winchester_C': 'S1897',
-                'Item_Weapon_vz61Skorpian_C': 'skorpian'
+                'Item_Weapon_vz61Skorpion_C': 'skorpion'
                 }
         try:
             value = keys[key]
