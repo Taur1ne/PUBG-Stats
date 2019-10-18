@@ -9,6 +9,7 @@ from discord.ext.commands import Context
 from pubg_python import PUBG, Shard
 
 from config import Config
+from stat_options import StatOptions
 from weapons import Weapons
 
 
@@ -17,6 +18,7 @@ pubg_api = PUBG(conf.pubg_api, Shard.PC_NA)
 # client = discord.Client()
 bot = commands.Bot(command_prefix='$')
 _weapons = Weapons()
+stat_options = StatOptions()
 
 @bot.command()
 async def weapon(ctx: Context, weapon_name: str = '', player_name: str = ''):
