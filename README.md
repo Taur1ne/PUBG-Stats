@@ -3,7 +3,7 @@
 A Discord bot to look up player's PUBG stats.
 
 ### Install
-`pip3 -r requirements.txt`
+`pip3 install -r requirements.txt`
 
 ### How to run
 `cd ./code; python3 pubg_bot.py`

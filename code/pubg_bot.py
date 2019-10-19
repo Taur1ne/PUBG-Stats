@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 import pprint
-import re
+# import re
 from typing import List
 
-import discord
+# import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from pubg_python import PUBG, Shard
 
 from config import Config
+from stat_options import StatOptions
 from weapons import Weapons
 
 
@@ -17,6 +18,7 @@ pubg_api = PUBG(conf.pubg_api, Shard.PC_NA)
 # client = discord.Client()
 bot = commands.Bot(command_prefix='$')
 _weapons = Weapons()
+stat_options = StatOptions()
 
 @bot.command()
 async def weapon(ctx: Context, weapon_name: str = '', player_name: str = ''):
@@ -54,7 +56,7 @@ async def weapons(ctx: Context,
     print('You are in the weapons function')
     p_name = _player_name(ctx.author, player_name)
     author = ctx.author.name
-    stats = sorting_stats.strip().replace(' ', '').split(',')
+    stats = stat_options.get_options(sorting_stats.split(','))
 
     pubg_player_id = player_id(p_name)
     if pubg_player_id == -1:
@@ -87,6 +89,7 @@ def build_obj(player_name: str, obj: object):
 
 def top_weapons(weapons, how_many: int = 5, sort: str = 'XPTotal'):
     weapons_list = []
+    standard_stat = stat_options.get_option(sort)
     # pprint.pprint(weapon_summaries)
     for weapon_summary in weapons.weapon_summaries:
         summary = weapons.weapon_summaries[weapon_summary]
@@ -102,12 +105,12 @@ def top_weapons(weapons, how_many: int = 5, sort: str = 'XPTotal'):
         for weapon_obj in weapons_list:
             for item in weapon_obj:
                 weapon = weapon_obj[item]
-                if sort == 'XPTotal':
-                    value = summary[sort]
-                    value_in_list = weapon[sort]
+                if standard_stat == 'XPTotal':
+                    value = summary[standard_stat]
+                    value_in_list = weapon[standard_stat]
                 else:
-                    value = summary['StatsTotal'][sort]
-                    value_in_list = weapon['StatsTotal'][sort]
+                    value = summary['StatsTotal'][standard_stat]
+                    value_in_list = weapon['StatsTotal'][standard_stat]
                 if value >= value_in_list:
                     if len(weapons_list) >= how_many:
                         pprint.pprint(weapons_list)
@@ -121,75 +124,17 @@ def top_weapons(weapons, how_many: int = 5, sort: str = 'XPTotal'):
 
 def top_weapons_reduced(weapons: dict, stats: List[str]) -> dict:
     """Returns a dict of weapon stats."""
-    weapons_out = [] 
-    top_level = ['xptotal', 'tiercurrent', 'levelcurrent', 'statstotal',
-                 'medals']
-    stat_map = {'damageplayer': 'DamagePlayer',
-                'damage': 'DamagePlayer',
-                'totaldamage': 'DamagePlayer',
-                'defeats': 'Defeats',
-                'totaldefeats': 'Defeats',
-                'defeat': 'Defeats',
-                'totaldefeat': 'Defeats',
-                'totalgroggies': 'Groggies',
-                'groggies': 'Groggies',
-                'totalgroggie': 'Groggies',
-                'groggie': 'Groggies',
-                'totalheadshots': 'HeadShots',
-                'headshots': 'HeadShots',
-                'totalheadshot': 'HeadShots',
-                'headshot': 'HeadShots',
-                'kills': 'Kills',
-                'totalkills': 'Kills',
-                'totalkill': 'Kills',
-                'kill': 'Kills',
-                'longrangedefeats': 'LongRangeDefeats',
-                'longrangedefeat': 'LongRangeDefeats',
-                'longrange': 'LongRangeDefeats',
-                'long': 'LongRangeDefeats',
-                'longestdefeat': 'LongestDefeat',
-                'longdefeat': 'LongestDefeat',
-                'mostdamageplayerinagame': 'MostDamagePlayerInAGame',
-                'mostdamage': 'MostDamagePlayerInAGame',
-                'mostdmg': 'MostDamagePlayerInAGame',
-                'mostdefeatsinagame': 'MostDefeatsInAGame',
-                'mostdefeatinagame': 'MostDefeatsInAGame',
-                'mostdefeats': 'MostDefeatsInAGame',
-                'mostdefeat': 'MostDefeatsInAGame',
-                'mostgroggiesinagame': 'MostGroggiesInAGame',
-                'mostgroggieinagame': 'MostGroggiesInAGame',
-                'mostgroggies': 'MostGroggiesInAGame',
-                'mostgroggie': 'MostGroggiesInAGame',
-                'mostheadshotsingame': 'MostHeadShotsInAGame',
-                'mostheadshotingame': 'MostHeadShotsInAGame',
-                'mostheadshots': 'MostHeadShotsInAGame',
-                'mostheadshot': 'MostHeadShotsInAGame',
-                'mostkillsinagame': 'MostKillsInAGame',
-                'mostkillinagame': 'MostKillsInAGame',
-                'mostkills': 'MostKillsInAGame',
-                'mostkill': 'MostKillsInAGame',
-                'levelcurrent': 'LevelCurrent',
-                'level': 'LevelCurrent',
-                'medals': 'Medals',
-                'statstotal': 'StatsTotal',
-                'stats': 'StatsTotal',
-                'tiercurrent': 'TierCurrent',
-                'tier': 'TierCurrent',
-                'xptotal': 'XPTotal',
-                'xp': 'XPTotal'
-                }
+    weapons_out = []
 
     for weapon in weapons:
         key = [key_ for key_ in weapon.keys()][0]
         new_weapon = { key: {} }
         for stat in stats:
-            l_stat = stat.lower()
             try:
-                standard_stat = stat_map[l_stat]
+                standard_stat = stat_options.get_option(stat)
             except KeyError:
-                print('Unable to find key {}'.format(l_stat))
                 continue
-            if l_stat in top_level:
+            if standard_stat in stat_options.top_level:
                 new_weapon[key][standard_stat] = weapon[key][standard_stat]
             else:
                 try:
